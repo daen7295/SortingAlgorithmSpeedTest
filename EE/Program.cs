@@ -18,6 +18,7 @@ namespace EE
             Sort(true, false, true);
             Sort(true, true, false);
             Sort(true, true, true);
+            Console.Beep();
         }
 
         // sort data through each algorithms that is long/short, high/low variation, and partially/not sorted
@@ -25,7 +26,6 @@ namespace EE
         {
             Random rand = new Random();
             int length, variation;
-            int[] y, w;
             // set values based on the booleans
             if (len)
                 length = 1000000;
@@ -39,34 +39,52 @@ namespace EE
             // fill the arrays; there are two because if they are partially sorted, a heap must be supplied to HeapSort
             int[] x = new int[length];
             for (int i = 0; i < x.Length; i++)
-                x[i] = rand.Next() % variation;
+                x[i] = rand.Next(0, variation);
             int[] z = new int[length];
             for (int i = 0; i < z.Length; i++)
-                z[i] = rand.Next() % variation;
+                z[i] = rand.Next(0, variation);
 
             // if it must be partially sorted, sort the list and add 10% more random on the end
+            int[] y, w;
             if (sort)
             {
                 ShellSort(x, false);
+                // heap sort is here to create a partially sorted heap to test with rather than giving it a small to large array
                 HeapSort(z, false);
+                // partially sorted small to large
                 y = new int[(int)(length + length * 0.1)];
                 for (int i = 0; i < x.Length; i++)
                     y[i] = x[i];
                 for (int i = x.Length; i < y.Length; i++)
-                    y[i] = rand.Next() % variation;
+                    y[i] = rand.Next(0, variation);
+                // partially sorted heap
                 w = new int[(int)(length + length * 0.1)];
                 for (int i = 0; i < z.Length; i++)
                     w[i] = z[i];
                 for (int i = z.Length; i < w.Length; i++)
-                    w[i] = rand.Next() % variation;
+                    w[i] = rand.Next(0, variation);
             }
             else
-                w = y = x;
+            {
+                w = new int[x.Length];
+                y = new int[x.Length];
+                for (int i = 0; i < x.Length; i++)
+                    w[i] = y[i] = x[i];
+            }
 
             // creates all the arrays to be sorted
-            int[] a, b, c, d, e;
-            a = c = d = e = y;
-            b = w;
+            int[] a = new int[y.Length];
+            int[] c = new int[y.Length];
+            int[] d = new int[y.Length];
+            int[] e = new int[y.Length];
+            int[] b = new int[w.Length];
+
+            for (int i = 0; i < y.Length; i++)
+            {
+                a[i] = c[i] = d[i] = e[i] = y[i];
+                b[i] = w[i];
+            }
+            
             Console.WriteLine("\nLong?: {0}\tHigh Variation?: {1}\tPartially Sorted?: {2}\n", len, var, sort);
             InsertionSort(a);
             HeapSort(b);
